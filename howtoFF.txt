@@ -1,0 +1,65 @@
+How FF Works
+
+ 
+
+FF searches the state space forwards from the initial state, using a variant of hill-climbing search and a non-admissible heuristic. The heuristic is computed using a simplified form of the same graph construction used by Graphplan, IPP and other planners. FF, however, rebuilds the graph in each state: thus, it puts a lot of work into expanding each node of the search tree, but when the heuristic works well, it expands relatively few nodes.
+In ordinary hill-climbing search, the best (according to the heuristic) neighbouring node is chosen. The hill-climbing variant used by FF works such that if all neighbouring nodes are worse than the current node, a breadth-first search is started outwards from the current node and continued until a better node is found. FF also uses some cut-off techniques so that it does not have to consider all neighbouring nodes when searching for a better node.
+
+Before starting search, FF performs some analysis to try to simplify the goal. If the goal simplifies to the constant FALSE, the problem is provably unsolvable and the planner exits.
+
+Plans found by FF are sequential, and not guaranteed to be the shortest possible.
+
+Input
+
+FF accepts PDDL input, essentially the same subset as IPP (quantified and conditional effects, quantified preconditions and goals and :typing, but not type hierarchies).
+There is also a version of FF (called Metric-FF) that can plan with numerical state variables and effects.
+
+Running FF
+
+FF is started with the command
+ff.exe -o <domain file> -f <problem file>
+More options are available, most generating more verbose output: run ff without arguments for a list.
+The command to run Metric-FF is called ffm.
+
+Output
+
+Typically, FF's output will look like the following: After some preamble (files read, etc.), hill-climbing search starts ("goal distance" is the heuristic value of the current node):
+
+Cueing down from goal distance:   31 into depth [1]
+                                  30            [1]
+                                  29            [1][2]
+                                  27            [1][2]
+                                  26            [1]
+                                  28            [1][2]
+				  .
+				  .
+				  .
+The number to the right is the depth of the breadth-first search needed to find a better node. This continues until a plan is found:
+
+ff: found legal plan as follows
+
+step    0: LOAD PACKET3 TRUCK3 OFFICE3
+        1: LOAD PACKET4 TRUCK4 OFFICE4
+	.
+	.
+	.
+Since hill-climbing can get stuck in "dead ends" of the search space, the breadth-first search for a better node may fail. In this case, FF reverts to plain best-first search from the initial state:
+
+Enforced Hill-climbing failed !
+switching to Best-first Search now.
+
+advancing to distance :    5
+                           4
+			   .
+			   .
+			   .
+Switching to best-first search is always "safe" (i.e. it makes the planner complete), but it is too inefficient to be possible for larger problems.
+Besides cases when hill-climbing fails, the effectiveness of FF's heuristic on a particular problem can be estimated by how deeply it has to search for a better node at each hill-climbing step.
+
+Known Problems
+
+FF, like IPP, requires all the arguments to an operator to be different, i.e. an action such as (move A B A) is considered impossible regardless of the domain definition. This can cause a problem in some domains: see slidetile.pddl and eight01.pddl for an example, and eight01x.pddl for a possible solution.
+More about FF
+
+Homepage:
+http://www.loria.fr/~hoffmanj/ff.html
