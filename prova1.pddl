@@ -1,0 +1,42 @@
+(define (problem prova1)(:domain domini)
+(:objects
+  dia1 dia2 dia3 dia4 dia5 dia6 dia7 dia8 dia9 dia10 dia11 dia12 dia13 dia14 dia15 - dia
+  d1 d2 d3 d4 d5 d6 d7 d8 d9 d10 - dificultat
+  ex1 ex2 ex3 ex4 ex5 - exercici
+  )
+  (:init
+    (es_dia_posterior dia2 dia1)
+    (es_dia_posterior dia3 dia2)
+    (es_dia_posterior dia4 dia3)
+    (es_dia_posterior dia5 dia4)
+    (es_dia_posterior dia6 dia5)
+    (es_dia_posterior dia7 dia6)
+    (es_dia_posterior dia8 dia7)
+    (es_dia_posterior dia9 dia8)
+    (es_dia_posterior dia10 dia9)
+    (es_dia_posterior dia11 dia10)
+    (es_dia_posterior dia12 dia11)
+    (es_dia_posterior dia13 dia12)
+    (es_dia_posterior dia14 dia13)
+    (es_dia_posterior dia15 dia14)
+    (es_dificultat_posterior d2 d1)
+    (es_dificultat_posterior d3 d2)
+    (es_dificultat_posterior d4 d3)
+    (es_dificultat_posterior d5 d4)
+    (es_dificultat_posterior d6 d5)
+    (es_dificultat_posterior d7 d6)
+    (es_dificultat_posterior d8 d7)
+    (es_dificultat_posterior d9 d8)
+    (es_dificultat_posterior d10 d9)
+
+    (preparador ex1 ex2)
+    (preparador ex4 ex5)
+    (dia_actual dia1)
+    (dificultat_actual ex2 d1)
+    )
+    (:goal (and (dia_actual dia15)
+                (dificultat_actual ex2 d10)
+            )
+
+    )
+)
