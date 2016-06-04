@@ -29,8 +29,11 @@
     (es_dificultat_posterior d9 d8)
     (es_dificultat_posterior d10 d9)
 
-    (preparador ex1 ex3)
+    (preparador ex4 ex3)
+    (preparador ex5 ex3)
+    (precursor ex1 ex3)
     (preparador ex2 ex3)
+
     (dia_actual dia1)
     (dificultat_actual ex3 d1)
     )
