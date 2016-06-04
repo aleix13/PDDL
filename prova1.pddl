@@ -29,13 +29,13 @@
     (es_dificultat_posterior d9 d8)
     (es_dificultat_posterior d10 d9)
 
-    (preparador ex1 ex2)
-    (preparador ex4 ex5)
+    (preparador ex1 ex3)
+    (preparador ex2 ex3)
     (dia_actual dia1)
-    (dificultat_actual ex2 d1)
+    (dificultat_actual ex3 d1)
     )
     (:goal (and (dia_actual dia15)
-                (dificultat_actual ex2 d10)
+                (dificultat_actual ex3 d10)
             )
 
     )
