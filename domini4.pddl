@@ -42,14 +42,15 @@
 
   (:action assigna-exercici
           :parameters(?ex - exercici ?dia - dia)
-          :precondition (and (not(esta_fent ?ex ?dia))
-                             (or (forall (?exP - exercici) (imply (preparador ?exP ?ex)(esta_fent ?exP ?dia)))
-                                 (not (exists (?exP - exercici) (preparador ?exP ?ex)))
-                             )
+          :precondition (and (<=(+(tempsTotal)(tempsEx ?ex))90)
+                          (not(esta_fent ?ex ?dia))
+                           (dia_actual ?dia)
+
                              (or (exists (?exPC - exercici) (and (precursor ?exPC ?ex)(es_ultim ?exPC ?dia)))
                                  (not (exists (?exPC - exercici) (precursor ?exPC ?ex))))
-                             (dia_actual ?dia)
-                             (<=(+(tempsTotal)(tempsEx ?ex))90)
+                                 (or (forall (?exP - exercici) (imply (preparador ?exP ?ex)(esta_fent ?exP ?dia)))
+                                     (not (exists (?exP - exercici) (preparador ?exP ?ex)))
+                                 )
                              )
 
           :effect(and (forall (?exU - exercici)(when(es_ultim ?exU ?dia) (not(es_ultim ?exU ?dia))))
@@ -61,14 +62,16 @@
 
   (:action assigna-exercici-dificultat
           :parameters(?ex - exercici ?dif - dificultat ?dia - dia)
-          :precondition (and (not(esta_fent ?ex ?dia))
-                             (or (forall (?exP - exercici) (imply (preparador ?exP ?ex)(esta_fent ?exP ?dia)))
-                                 (not (exists (?exP - exercici) (preparador ?exP ?ex))))
+          :precondition (and  (<=(+(tempsTotal)(tempsEx ?ex))90)
+                              (not(esta_fent ?ex ?dia))
+                               (dia_actual ?dia)
+
                              (or (exists (?exPC - exercici) (and (precursor ?exPC ?ex)(es_ultim ?exPC ?dia)))
                                  (not (exists (?exPC - exercici) (precursor ?exPC ?ex))))
-                             (dia_actual ?dia)
+                                 (or (forall (?exP - exercici) (imply (preparador ?exP ?ex)(esta_fent ?exP ?dia)))
+                                     (not (exists (?exP - exercici) (preparador ?exP ?ex))))
                              (exists (?difA - dificultat)(and (dificultat_actual ?ex ?difA) (es_dificultat_posterior ?dif ?difA)))
-                             (<=(+(tempsTotal)(tempsEx ?ex))90)
+
                              )
 
           :effect(and (forall (?exU - exercici)(when(es_ultim ?exU ?dia) (not(es_ultim ?exU ?dia))))

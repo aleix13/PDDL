@@ -5,13 +5,13 @@
   ex1 ex2 ex3 ex4 ex5  ex6 ex7 - exercici
   )
   (:init
-    (=(tempsEx ex1) 80)
-    (=(tempsEx ex2) 30)
-    (=(tempsEx ex3) 40)
+    (=(tempsEx ex1) 10)
+    (=(tempsEx ex2) 2)
+    (=(tempsEx ex3) 10)
     (=(tempsEx ex4) 30)
-    (=(tempsEx ex5) 25)
+    (=(tempsEx ex5) 20)
     (=(tempsEx ex6) 20)
-    (=(tempsEx ex7) 20)
+    (=(tempsEx ex7) 4)
     (=(tempsTotal) 0)
 
     (es_dia_posterior dia2 dia1)
@@ -39,10 +39,12 @@
     (es_dificultat_posterior d10 d9)
 
 
-    ;(preparador ex4 ex3)
-    (preparador ex5 ex3)
-    ;(precursor ex1 ex3)
-    ;(;preparador ex2 ex3)
+    (preparador ex4 ex3)
+    (preparador ex5 ex4)
+    (precursor ex1 ex6)
+    (preparador ex2 ex1)
+    (precursor ex2 ex7)
+    (precursor ex4 ex2)
 
     (dia_actual dia1)
     (dificultat_actual ex1 d1)
