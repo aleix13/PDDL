@@ -2,7 +2,8 @@
 (:objects
   dia1 dia2 dia3 dia4 dia5 dia6 dia7 dia8 dia9 dia10 dia11 dia12 dia13 dia14 dia15 - dia
   d1 d2 d3 d4 d5 d6 d7 d8 d9 d10 - dificultat
-  ex1 ex2 ex3 ex4 ex5 - exercici
+  ex1 ex2 ex3 ex4 ex5  ex6 ex7 - exercici
+  c0 c1 c2 c3 c4 c5 c6 - cardinalitat
   )
   (:init
     (es_dia_posterior dia2 dia1)
@@ -29,6 +30,29 @@
     (es_dificultat_posterior d9 d8)
     (es_dificultat_posterior d10 d9)
 
+    (es_card_posterior c1 c0)
+    (es_card_posterior c2 c1)
+    (es_card_posterior c3 c2)
+    (es_card_posterior c4 c3)
+    (es_card_posterior c5 c4)
+    (es_card_posterior c6 c5)
+
+    (cardinalitat_dia dia1 c0)
+    (cardinalitat_dia dia2 c0)
+    (cardinalitat_dia dia3 c0)
+    (cardinalitat_dia dia4 c0)
+    (cardinalitat_dia dia5 c0)
+    (cardinalitat_dia dia6 c0)
+    (cardinalitat_dia dia7 c0)
+    (cardinalitat_dia dia8 c0)
+    (cardinalitat_dia dia9 c0)
+    (cardinalitat_dia dia10 c0)
+    (cardinalitat_dia dia11 c0)
+    (cardinalitat_dia dia12 c0)
+    (cardinalitat_dia dia13 c0)
+    (cardinalitat_dia dia14 c0)
+    (cardinalitat_dia dia15 c0)
+
     (preparador ex4 ex3)
     (preparador ex5 ex3)
     (precursor ex1 ex3)
@@ -36,9 +60,15 @@
 
     (dia_actual dia1)
     (dificultat_actual ex3 d1)
+    (dificultat_actual ex6 d2)
+    (dificultat_actual ex5 d3)
+    (dificultat_actual ex7 d3)
     )
     (:goal (and (dia_actual dia15)
-                (dificultat_actual ex3 d10)
+                (dificultat_actual ex3 d4)
+                (dificultat_actual ex5 d5)
+                (dificultat_actual ex7 d4)
+                (dificultat_actual ex6 d7)
             )
 
     )
