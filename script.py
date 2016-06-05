@@ -2,13 +2,15 @@
 
 import sys,random
 
+#constants
+MAX_EXERCISES = 30
+
+
 def ChooseStringOptions(inp,errorMessage,*options):
     while(True):
-        i = 0
-        for x in options:
+        for i,x in enumerate(options):
             if inp == x:
                 return i
-            i+=1
         else:
             inp = input(errorMessage)
 
@@ -32,11 +34,15 @@ def randomGenerate(versionfile):
     'this is not a positive number,try again, how many files do you want to generate? ')
     msg = 'Which extension do you want to use, extension3 or extension4 (3/4)? '
     ext = input(msg)
-    ext = ChooseStringOptions(ext,'Try again, ' + msg,'3','4')
+    ext = ChooseStringOptions(ext,'Try again, ' + msg,'4','3')
     if ext: #extension3
-        #do something
-    else:   #extension4
-        #do something
+        numberEx = random.randint(1,MAX_EXERCISES)
+        numGoalEx = random.randint(1,numberEx)
+        goalDif = random.sample(range(1,numberEx+1),numGoalEx)
+        goalDif = list(map(lambda x: (x,random.randint(1,10)),goalDif))
+        iniDif = list(map(lambda x: random.randint(1,10),range(1,numberEx+1)))
+        print(iniDif)
+
 
 
 
