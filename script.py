@@ -4,7 +4,7 @@ import sys,random,os
 from os import listdir
 from os.path import isfile, join
 #constants
-MAX_EXERCISES = 60
+MAX_EXERCISES = 30
 MAX_RATIO_PREC = 0.15
 MAX_RATIO_PREP = 0.5
 
@@ -33,7 +33,7 @@ def writeProblemExt3(numberEx,iniDif,goalDif,precursors,preparadors,versionfile)
     f = open('JocsDeProva/Ext3/file'+repr(versionfile)+'.pddl','w')
     exer = ''
     for i in range(numberEx):
-        exer = exer + 'ex'+repr(i) + ' '
+        exer = exer + 'ex'+repr(i+1) + ' '
     f.write('(define (problem file{!r})(:domain domini)\n'
             '(:objects\n'
             '   dia1 dia2 dia3 dia4 dia5 dia6 dia7 dia8 dia9 dia10 dia11 dia12 dia13 dia14 dia15 - dia\n'
@@ -42,9 +42,125 @@ def writeProblemExt3(numberEx,iniDif,goalDif,precursors,preparadors,versionfile)
             '   c0 c1 c2 c3 c4 c5 c6 - cardinalitat\n'
             ')\n'.format(versionfile,exer)
     )
+    f.write(
+          '(:init\n'
+          '\t(es_dia_posterior dia2 dia1)\n'
+          '\t(es_dia_posterior dia3 dia2)\n'
+          '\t(es_dia_posterior dia4 dia3)\n'
+          '\t(es_dia_posterior dia5 dia4)\n'
+          '\t(es_dia_posterior dia6 dia5)\n'
+          '\t(es_dia_posterior dia7 dia6)\n'
+          '\t(es_dia_posterior dia8 dia7)\n'
+          '\t(es_dia_posterior dia9 dia8)\n'
+          '\t(es_dia_posterior dia10 dia9)\n'
+          '\t(es_dia_posterior dia11 dia10)\n'
+          '\t(es_dia_posterior dia12 dia11)\n'
+          '\t(es_dia_posterior dia13 dia12)\n'
+          '\t(es_dia_posterior dia14 dia13)\n'
+          '\t(es_dia_posterior dia15 dia14)\n'
+          '\t(es_dificultat_posterior d2 d1)\n'
+          '\t(es_dificultat_posterior d3 d2)\n'
+          '\t(es_dificultat_posterior d4 d3)\n'
+          '\t(es_dificultat_posterior d5 d4)\n'
+          '\t(es_dificultat_posterior d6 d5)\n'
+          '\t(es_dificultat_posterior d7 d6)\n'
+          '\t(es_dificultat_posterior d8 d7)\n'
+          '\t(es_dificultat_posterior d9 d8)\n'
+          '\t(es_dificultat_posterior d10 d9)\n'
+
+          '\t(es_card_posterior c1 c0)\n'
+          '\t(es_card_posterior c2 c1)\n'
+          '\t(es_card_posterior c3 c2)\n'
+          '\t(es_card_posterior c4 c3)\n'
+          '\t(es_card_posterior c5 c4)\n'
+          '\t(es_card_posterior c6 c5)\n'
+
+          '\t(cardinalitat_dia dia1 c0)\n'
+          '\t(cardinalitat_dia dia2 c0)\n'
+          '\t(cardinalitat_dia dia3 c0)\n'
+          '\t(cardinalitat_dia dia4 c0)\n'
+          '\t(cardinalitat_dia dia5 c0)\n'
+          '\t(cardinalitat_dia dia6 c0)\n'
+          '\t(cardinalitat_dia dia7 c0)\n'
+          '\t(cardinalitat_dia dia8 c0)\n'
+          '\t(cardinalitat_dia dia9 c0)\n'
+          '\t(cardinalitat_dia dia10 c0)\n'
+          '\t(cardinalitat_dia dia11 c0)\n'
+          '\t(cardinalitat_dia dia12 c0)\n'
+          '\t(cardinalitat_dia dia13 c0)\n'
+          '\t(cardinalitat_dia dia14 c0)\n'
+          '\t(cardinalitat_dia dia15 c0)\n'
+          '\t(dia_actual dia1)\n'
+    )
+    for i,x in enumerate(iniDif):
+        f.write('\t(dificultat_actual ex' + repr(i+1) + ' d'+repr(x) + ')\n')
+    for (x,y) in precursors:
+        f.write('\t(precursor ex'+repr(x)+ ' ex' + repr(y) + ')\n')
+    for (x,y) in preparadors:
+        f.write('\t(preparador ex'+repr(x)+ ' ex' + repr(y) + ')\n')
+    f.write('\t) \n')
+    f.write('(:goal (and (dia_actual dia15)\n')
+
+    for (x,y) in goalDif:
+        f.write('\t(dificultat_actual ex' + repr(x) + ' d'+repr(y) + ')\n')
+    f.write('\t)\n)\n)')
 
 def writeProblemExt4(numberEx,iniDif,goalDif,tempsIni,precursors,preparadors,versionfile):
-    f = open('JocsDeProva/Ext4/file'+versionfile+'.pddl','w')
+    f = open('JocsDeProva/Ext4/file'+repr(versionfile)+'.pddl','w')
+    exer = ''
+    for i in range(numberEx):
+        exer = exer + 'ex'+repr(i+1) + ' '
+    f.write('(define (problem file{!r})(:domain domini)\n'
+            '(:objects\n'
+            '   dia1 dia2 dia3 dia4 dia5 dia6 dia7 dia8 dia9 dia10 dia11 dia12 dia13 dia14 dia15 - dia\n'
+            '   d1 d2 d3 d4 d5 d6 d7 d8 d9 d10 - dificultat\n'
+            '   {} - exercici\n'
+            ')\n'.format(versionfile,exer)
+    )
+    f.write(
+          '(:init\n'
+          '\t(es_dia_posterior dia2 dia1)\n'
+          '\t(es_dia_posterior dia3 dia2)\n'
+          '\t(es_dia_posterior dia4 dia3)\n'
+          '\t(es_dia_posterior dia5 dia4)\n'
+          '\t(es_dia_posterior dia6 dia5)\n'
+          '\t(es_dia_posterior dia7 dia6)\n'
+          '\t(es_dia_posterior dia8 dia7)\n'
+          '\t(es_dia_posterior dia9 dia8)\n'
+          '\t(es_dia_posterior dia10 dia9)\n'
+          '\t(es_dia_posterior dia11 dia10)\n'
+          '\t(es_dia_posterior dia12 dia11)\n'
+          '\t(es_dia_posterior dia13 dia12)\n'
+          '\t(es_dia_posterior dia14 dia13)\n'
+          '\t(es_dia_posterior dia15 dia14)\n'
+          '\t(es_dificultat_posterior d2 d1)\n'
+          '\t(es_dificultat_posterior d3 d2)\n'
+          '\t(es_dificultat_posterior d4 d3)\n'
+          '\t(es_dificultat_posterior d5 d4)\n'
+          '\t(es_dificultat_posterior d6 d5)\n'
+          '\t(es_dificultat_posterior d7 d6)\n'
+          '\t(es_dificultat_posterior d8 d7)\n'
+          '\t(es_dificultat_posterior d9 d8)\n'
+          '\t(es_dificultat_posterior d10 d9)\n'
+          '\t(dia_actual dia1)\n'
+    )
+    #(=(tempsEx ex1) 10)
+    for i,x in enumerate(tempsIni):
+        f.write('\t(=(tempsEx ex' + repr(i + 1) + ') ' + repr(x) +')\n')
+    for i,x in enumerate(iniDif):
+        f.write('\t(dificultat_actual ex' + repr(i+1) + ' d'+repr(x) + ')\n')
+    for (x,y) in precursors:
+        f.write('\t(precursor ex'+repr(x)+ ' ex' + repr(y) + ')\n')
+    for (x,y) in preparadors:
+        f.write('\t(preparador ex'+repr(x)+ ' ex' + repr(y) + ')\n')
+    f.write('\t) \n')
+    f.write('(:goal (and (dia_actual dia15)\n')
+
+    for (x,y) in goalDif:
+        f.write('\t(dificultat_actual ex' + repr(x) + ' d'+repr(y) + ')\n')
+    f.write('\t)\n)\n)')
+
+
 def randomGenerate(v3,v4):
     random.seed()
     numberFiles = input('How many files do you want to generate? ')
@@ -59,8 +175,8 @@ def randomGenerate(v3,v4):
             numberEx = random.randint(1,MAX_EXERCISES)
             numGoalEx = random.randint(1,numberEx)
             goalDif = random.sample(range(1,numberEx+1),numGoalEx)
-            goalDif = list(map(lambda x: (x,random.randint(1,10)),goalDif))
             iniDif = list(map(lambda x: random.randint(1,10),range(1,numberEx+1)))
+            goalDif = list(map(lambda x: (x,random.randint(iniDif[x-1],10)),goalDif))
             ocurrences = {}
             for x in range(1,numberEx+1):
                 oc = set(range(1,numberEx+1))
@@ -114,8 +230,8 @@ def randomGenerate(v3,v4):
             numberEx = random.randint(1,MAX_EXERCISES)
             numGoalEx = random.randint(1,numberEx)
             goalDif = random.sample(range(1,numberEx+1),numGoalEx)
-            goalDif = list(map(lambda x: (x,random.randint(1,10)),goalDif))
             iniDif = list(map(lambda x: random.randint(1,10),range(1,numberEx+1)))
+            goalDif = list(map(lambda x: (x,random.randint(iniDif[x-1],10)),goalDif))
             ocurrences = {}
             for x in range(1,numberEx+1):
                 oc = set(range(1,numberEx+1))
