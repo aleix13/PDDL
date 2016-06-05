@@ -37,6 +37,7 @@ def writeProblemExt3(numberEx,iniDif,goalDif,precursors,preparadors,versionfile=
     exer = ''
     for i in range(numberEx):
         exer = exer + 'ex'+repr(i+1) + ' '
+    #header of the file
     f.write('(define (problem file{!r})(:domain domini)\n'
             '(:objects\n'
             '   dia1 dia2 dia3 dia4 dia5 dia6 dia7 dia8 dia9 dia10 dia11 dia12 dia13 dia14 dia15 - dia\n'
@@ -45,6 +46,7 @@ def writeProblemExt3(numberEx,iniDif,goalDif,precursors,preparadors,versionfile=
             '   c0 c1 c2 c3 c4 c5 c6 - cardinalitat\n'
             ')\n'.format(versionfile,exer)
     )
+    #some inits
     f.write(
           '(:init\n'
           '\t(es_dia_posterior dia2 dia1)\n'
@@ -96,15 +98,20 @@ def writeProblemExt3(numberEx,iniDif,goalDif,precursors,preparadors,versionfile=
           '\t(dia_actual dia1)\n'
 
     )
+    #initial dificulties
     for i,x in enumerate(iniDif):
         f.write('\t(dificultat_actual ex' + repr(i+1) + ' d'+repr(x) + ')\n')
+    #precursors
     for (x,y) in precursors:
         f.write('\t(precursor ex'+repr(x)+ ' ex' + repr(y) + ')\n')
+    #preparadors
     for (x,y) in preparadors:
         f.write('\t(preparador ex'+repr(x)+ ' ex' + repr(y) + ')\n')
+
     f.write('\t) \n')
     f.write('(:goal (and (dia_actual dia15)\n')
 
+    #goal dificulties
     for (x,y) in goalDif:
         f.write('\t(dificultat_actual ex' + repr(x) + ' d'+repr(y) + ')\n')
     f.write('\t)\n)\n)')
@@ -117,6 +124,7 @@ def writeProblemExt4(numberEx,iniDif,goalDif,tempsIni,precursors,preparadors,ver
     exer = ''
     for i in range(numberEx):
         exer = exer + 'ex'+repr(i+1) + ' '
+    #file header
     f.write('(define (problem file{!r})(:domain domini)\n'
             '(:objects\n'
             '   dia1 dia2 dia3 dia4 dia5 dia6 dia7 dia8 dia9 dia10 dia11 dia12 dia13 dia14 dia15 - dia\n'
@@ -124,6 +132,7 @@ def writeProblemExt4(numberEx,iniDif,goalDif,tempsIni,precursors,preparadors,ver
             '   {} - exercici\n'
             ')\n'.format(versionfile,exer)
     )
+    #some init declarations
     f.write(
           '(:init\n'
           '\t(es_dia_posterior dia2 dia1)\n'
@@ -152,18 +161,23 @@ def writeProblemExt4(numberEx,iniDif,goalDif,tempsIni,precursors,preparadors,ver
           '\t(dia_actual dia1)\n'
           '\t(=(tempsTotal) 0)\n'
     )
-
+    #time for each exercice
     for i,x in enumerate(tempsIni):
         f.write('\t(=(tempsEx ex' + repr(i + 1) + ') ' + repr(x) +')\n')
+    #initial difficulty
     for i,x in enumerate(iniDif):
         f.write('\t(dificultat_actual ex' + repr(i+1) + ' d'+repr(x) + ')\n')
+    #precursors
     for (x,y) in precursors:
         f.write('\t(precursor ex'+repr(x)+ ' ex' + repr(y) + ')\n')
+    #preparators
     for (x,y) in preparadors:
         f.write('\t(preparador ex'+repr(x)+ ' ex' + repr(y) + ')\n')
+
     f.write('\t) \n')
     f.write('(:goal (and (dia_actual dia15)\n')
 
+    #goal difficulties
     for (x,y) in goalDif:
         f.write('\t(dificultat_actual ex' + repr(x) + ' d'+repr(y) + ')\n')
     f.write('\t)\n)\n)')
@@ -178,24 +192,31 @@ def randomGenerate(v3,v4):
     msg = 'Which extension do you want to use, extension3 or extension4 (3/4)? '
     ext = input(msg)
     ext = ChooseStringOptions(ext,'Try again, ' + msg,'4','3')
-    if ext: #extension3
+
+    if ext: #---------------------------------extension3---------------------------------
         for n in range(numberFiles):
             numberEx = random.randint(1,MAX_EXERCISES)
             numGoalEx = random.randint(1,numberEx)
-            goalDif = random.sample(range(1,numberEx+1),numGoalEx)
-            iniDif = list(map(lambda x: random.randint(1,10),range(1,numberEx+1)))
-            goalDif = list(map(lambda x: (x,random.randint(iniDif[x-1],10)),goalDif))
+            goalDif = random.sample(range(1,numberEx+1),numGoalEx)                                  #a sample from original excercices
+            iniDif = list(map(lambda x: random.randint(1,10),range(1,numberEx+1)))                  #initial dificulties from 1 to 10_
+            goalDif = list(map(lambda x: (x,random.randint(iniDif[x-1],10)),goalDif))               #each member of a sample is assigned random objective >= initial difficulty
+
+            #Each ocurrences{i} contents a set of element that can be precursors or preparators for exercice i
             ocurrences = {}
             for x in range(1,numberEx+1):
                 oc = set(range(1,numberEx+1))
                 oc.remove(x)
                 ocurrences[x] = oc
-            activities = [0 for x in range(numberEx)]
+
+            activities = [0 for x in range(numberEx)]                                               #this stores the number of activities for each exercice
+
             numPrecursor = numberEx - random.randint(int(numberEx*(1-MAX_RATIO_PREC)),numberEx)
             numPreparador = numberEx - random.randint(int(numberEx*(1-MAX_RATIO_PREP)),numberEx)
             precursors = []
             preparadors = []
             maxIter = random.randint(5,100)*numPrecursor
+
+            #---------------------------------calculate precursors---------------------------------
             while(ocurrences and numPrecursor > 0 and maxIter > 0):
                 maxIter -= 1
                 x = random.choice(list(ocurrences.keys()))
@@ -214,6 +235,8 @@ def randomGenerate(v3,v4):
                     activities[x-1] += 1
 
             maxIter = random.randint(5,100)*numPreparador
+
+            #---------------------------------calculate preparators--------------------------------
             while(ocurrences and numPreparador > 0 and maxIter > 0):
                 maxIter -= 1
                 x = random.choice(list(ocurrences.keys()))
@@ -230,21 +253,26 @@ def randomGenerate(v3,v4):
                     numPreparador -= 1
                     preparadors.append((prec,x))
                     activities[x-1] += 1
+
+
+            #write the problem into a file
             writeProblemExt3(numberEx,iniDif,goalDif,precursors,preparadors,vesrionfile=v3)
             v3+=1
 
-    else:       #extension4
+    else:       #---------------------------------extension4---------------------------------
         for n in range(numberFiles):
             numberEx = random.randint(1,MAX_EXERCISES)
             numGoalEx = random.randint(1,numberEx)
             goalDif = random.sample(range(1,numberEx+1),numGoalEx)
             iniDif = list(map(lambda x: random.randint(1,10),range(1,numberEx+1)))
             goalDif = list(map(lambda x: (x,random.randint(iniDif[x-1],10)),goalDif))
+
             ocurrences = {}
             for x in range(1,numberEx+1):
                 oc = set(range(1,numberEx+1))
                 oc.remove(x)
                 ocurrences[x] = oc
+
             visited = [False for i in range(numberEx)]
             temps = [random.randint(1,90) for i in range(numberEx)]
             tempsIni = list(temps)
@@ -253,6 +281,8 @@ def randomGenerate(v3,v4):
             precursors = []
             preparadors = []
             maxIter = random.randint(5,100)*numPrecursor
+
+            #---------------------------------calculate precursors---------------------------------
             while(ocurrences and numPrecursor > 0 and maxIter > 0):
                 maxIter -= 1
                 x = random.choice(list(ocurrences.keys()))
@@ -271,6 +301,7 @@ def randomGenerate(v3,v4):
                     visited[x-1] = True
                     temps[x-1] += temps[prec - 1]
 
+            #---------------------------------calculate preparators---------------------------------
             maxIter = random.randint(5,100)*numPreparador
             while(ocurrences and numPreparador > 0 and maxIter > 0):
                 maxIter -= 1
@@ -289,6 +320,7 @@ def randomGenerate(v3,v4):
                     preparadors.append((prec,x))
                     temps[x-1] += temps[prec - 1]
 
+
             writeProblemExt4(numberEx,iniDif,goalDif,tempsIni,precursors,preparadors,versionfile=v4)
             v4+=1
 
@@ -297,10 +329,14 @@ def interactiveGenerate():
     msg = 'Which extension do you want to use, extension3 or extension4 (3/4)? '
     ext = input(msg)
     ext = ChooseStringOptions(ext,'Try again, ' + msg,'4','3')
-    if ext:     #extension3
+
+    if ext:     #---------------------------------extension3---------------------------------
         msg = 'How many exercices do you want to do? (> 0): '
         numberEx = input(msg)
         numberEx = checkType(numberEx,lambda x: int(x), lambda x: x > 0, msg,msg)
+
+
+        #---------------------------------initial difficulty---------------------------------
         msg = 'Do you want to enter each initial difficulty or assign it randomly? (E/R): '
         enter = input(msg)
         enter = ChooseStringOptions(enter,msg,'R','E')
@@ -316,6 +352,8 @@ def interactiveGenerate():
                 iniDif.append(dif)
         else:
             iniDif = list(map(lambda x: random.randint(1,10),range(1,numberEx+1)))
+
+        #---------------------------------goal difficulty---------------------------------
         goalDif = []
         visited = [False for x in range(numberEx)]
         msg = 'Do you want to enter each final difficulty or assign it randomly? (E/R)'
@@ -347,6 +385,7 @@ def interactiveGenerate():
             goalDif = random.sample(range(1,numberEx+1),numGoalEx)
             goalDif = list(map(lambda x: (x,random.randint(iniDif[x-1],10)),goalDif))
 
+        #---------------------------------calculate precursors---------------------------------
         precursors = []
         visited = [False for x in range(numberEx)]
         msg = 'Enter each precursor and then its exercicie, When finnished enter -1'
@@ -364,6 +403,7 @@ def interactiveGenerate():
             else:
                 break
 
+        #---------------------------------calculate preparator---------------------------------
         preparadors = []
         msg = 'Enter each preparator and then its exercicie, When finnished enter -1'
         print(msg)
@@ -379,14 +419,17 @@ def interactiveGenerate():
             else:
                 break
 
+
         fileName = input('Enter the name of the file that will be saved (auto extension): ')
         writeProblemExt3(numberEx,iniDif,goalDif,precursors,preparadors,name=fileName)
 
 
-    else:       #extension4
+    else:       #---------------------------------extension4---------------------------------
         msg = 'How many exercices do you want to do? (> 0): '
         numberEx = input(msg)
         numberEx = checkType(numberEx,lambda x: int(x), lambda x: x > 0, msg,msg)
+
+        #---------------------------------initial difficulties---------------------------------
         msg = 'Do you want to enter each initial difficulty or assign it randomly? (E/R): '
         enter = input(msg)
         enter = ChooseStringOptions(enter,msg,'R','E')
@@ -402,6 +445,8 @@ def interactiveGenerate():
                 iniDif.append(dif)
         else:
             iniDif = list(map(lambda x: random.randint(1,10),range(1,numberEx+1)))
+
+        #---------------------------------goal difficulties---------------------------------
         goalDif = []
         visited = [False for x in range(numberEx)]
         msg = 'Do you want to enter each final difficulty or assign it randomly? (E/R)'
@@ -433,6 +478,7 @@ def interactiveGenerate():
             goalDif = random.sample(range(1,numberEx+1),numGoalEx)
             goalDif = list(map(lambda x: (x,random.randint(iniDif[x-1],10)),goalDif))
 
+        #---------------------------------exercice time---------------------------------
         msg = 'Do you want to enter each time for exercise or assign it randomly? (E/R): '
         enter = input(msg)
         enter = ChooseStringOptions(enter,msg,'R','E')
@@ -449,6 +495,7 @@ def interactiveGenerate():
         else:
             tempsIni = list(map(lambda x: random.randint(1,10),range(1,numberEx+1)))
 
+        #---------------------------------calculate precursors---------------------------------
         precursors = []
         visited = [False for x in range(numberEx)]
         msg = 'Enter each precursor and then its exercicie, When finnished enter -1'
@@ -466,6 +513,7 @@ def interactiveGenerate():
             else:
                 break
 
+        #---------------------------------calculate preparators---------------------------------
         preparadors = []
         msg = 'Enter each preparator and then its exercicie, When finnished enter -1'
         print(msg)
@@ -487,9 +535,10 @@ def interactiveGenerate():
 
 
 
-#-----MAIN-----
+##---------------------------------MAIN---------------------------------
 pathExt3 = './JocsDeProva/Ext3/'
 pathExt4 = './JocsDeProva/Ext4/'
+#check if folders exists, if not, create them
 if not os.path.exists(pathExt3):
     os.makedirs(pathExt3)
 if not os.path.exists(pathExt4):
@@ -498,7 +547,7 @@ filesExt3 = [f for f in listdir(pathExt3) if isfile(join(pathExt3, f))]
 filesExt4 = [f for f in listdir(pathExt4) if isfile(join(pathExt4, f))]
 
 v3 = v4 = 0
-
+#check version number for extension3
 for x in filesExt3:
     if(x[0:4] == 'file'):
         num = x[4:(5+(len(x) - 10))]
@@ -509,7 +558,7 @@ for x in filesExt3:
         if isinstance(num,int):
             if(num > v3):
                 v3 = num
-
+#check version number for extension4
 for x in filesExt4:
     if(x[0:4] == 'file'):
         num = x[4:(5+(len(x) - 10))]
@@ -520,13 +569,13 @@ for x in filesExt4:
         if isinstance(num,int):
             if(num > v4):
                 v4 = num
-print(v3,v4)
-
 
 is_random = input('Generate Random or Interactively? (R/I): ')
 is_random = ChooseStringOptions(is_random,'Try again,generate Random or Interactively? (R/I): ','I','R')
 if is_random:
+    #generate randomly each file
     randomGenerate(v3+1,v4+1)
 
 else:
+    #generate Interactively each file
     interactiveGenerate()
