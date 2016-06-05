@@ -12,7 +12,7 @@ MAX_RATIO_PREP = 0.5
 def ChooseStringOptions(inp,errorMessage,*options):
     while(True):
         for i,x in enumerate(options):
-            if inp == x:
+            if inp.lower() == x.lower():
                 return i
         else:
             inp = input(errorMessage)
@@ -29,8 +29,11 @@ def checkType(attr,type,pred=lambda x: True,errorMessage1='',errorMessage2 = '')
             attr=input(errorMessage1)
     return attr
 
-def writeProblemExt3(numberEx,iniDif,goalDif,precursors,preparadors,versionfile):
-    f = open('JocsDeProva/Ext3/file'+repr(versionfile)+'.pddl','w')
+def writeProblemExt3(numberEx,iniDif,goalDif,precursors,preparadors,versionfile=-1,name=''):
+    if(name == ''):
+        f = open('JocsDeProva/Ext3/file'+repr(versionfile)+'.pddl','w')
+    else:
+        f = open(name + '.pddl','w')
     exer = ''
     for i in range(numberEx):
         exer = exer + 'ex'+repr(i+1) + ' '
@@ -91,6 +94,7 @@ def writeProblemExt3(numberEx,iniDif,goalDif,precursors,preparadors,versionfile)
           '\t(cardinalitat_dia dia14 c0)\n'
           '\t(cardinalitat_dia dia15 c0)\n'
           '\t(dia_actual dia1)\n'
+
     )
     for i,x in enumerate(iniDif):
         f.write('\t(dificultat_actual ex' + repr(i+1) + ' d'+repr(x) + ')\n')
@@ -105,8 +109,11 @@ def writeProblemExt3(numberEx,iniDif,goalDif,precursors,preparadors,versionfile)
         f.write('\t(dificultat_actual ex' + repr(x) + ' d'+repr(y) + ')\n')
     f.write('\t)\n)\n)')
 
-def writeProblemExt4(numberEx,iniDif,goalDif,tempsIni,precursors,preparadors,versionfile):
-    f = open('JocsDeProva/Ext4/file'+repr(versionfile)+'.pddl','w')
+def writeProblemExt4(numberEx,iniDif,goalDif,tempsIni,precursors,preparadors,versionfile=-1,name=''):
+    if(name == ''):
+        f = open('JocsDeProva/Ext4/file'+repr(versionfile)+'.pddl','w')
+    else:
+        f = open(name + '.pddl','w')
     exer = ''
     for i in range(numberEx):
         exer = exer + 'ex'+repr(i+1) + ' '
@@ -143,8 +150,9 @@ def writeProblemExt4(numberEx,iniDif,goalDif,tempsIni,precursors,preparadors,ver
           '\t(es_dificultat_posterior d9 d8)\n'
           '\t(es_dificultat_posterior d10 d9)\n'
           '\t(dia_actual dia1)\n'
+          '\t(=(tempsTotal) 0)\n'
     )
-    #(=(tempsEx ex1) 10)
+
     for i,x in enumerate(tempsIni):
         f.write('\t(=(tempsEx ex' + repr(i + 1) + ') ' + repr(x) +')\n')
     for i,x in enumerate(iniDif):
@@ -222,7 +230,7 @@ def randomGenerate(v3,v4):
                     numPreparador -= 1
                     preparadors.append((prec,x))
                     activities[x-1] += 1
-            writeProblemExt3(numberEx,iniDif,goalDif,precursors,preparadors,v3)
+            writeProblemExt3(numberEx,iniDif,goalDif,precursors,preparadors,vesrionfile=v3)
             v3+=1
 
     else:       #extension4
@@ -281,12 +289,200 @@ def randomGenerate(v3,v4):
                     preparadors.append((prec,x))
                     temps[x-1] += temps[prec - 1]
 
-            writeProblemExt4(numberEx,iniDif,goalDif,tempsIni,precursors,preparadors,v4)
+            writeProblemExt4(numberEx,iniDif,goalDif,tempsIni,precursors,preparadors,versionfile=v4)
             v4+=1
 
 
+def interactiveGenerate():
+    msg = 'Which extension do you want to use, extension3 or extension4 (3/4)? '
+    ext = input(msg)
+    ext = ChooseStringOptions(ext,'Try again, ' + msg,'4','3')
+    if ext:     #extension3
+        msg = 'How many exercices do you want to do? (> 0): '
+        numberEx = input(msg)
+        numberEx = checkType(numberEx,lambda x: int(x), lambda x: x > 0, msg,msg)
+        msg = 'Do you want to enter each initial difficulty or assign it randomly? (E/R): '
+        enter = input(msg)
+        enter = ChooseStringOptions(enter,msg,'R','E')
+        print(enter)
+        iniDif = []
+        if enter:
+            msg = 'Enter each exercise initial difficulty one at a time: (0 - 10)'
+            print(msg)
+            for i in range(numberEx):
+                msg = 'ex' + repr(i+1) + ' initial difficulty: (1 - 10)'
+                dif = input(msg)
+                dif = checkType(dif,lambda x: int(x),lambda x: x >= 1 and x <= 10,msg,msg)
+                iniDif.append(dif)
+        else:
+            iniDif = list(map(lambda x: random.randint(1,10),range(1,numberEx+1)))
+        goalDif = []
+        visited = [False for x in range(numberEx)]
+        msg = 'Do you want to enter each final difficulty or assign it randomly? (E/R)'
+        enter = input(msg)
+        enter = ChooseStringOptions(enter,msg,'R','E')
+        if enter:
+            msg = 'Enter each final difficulty one at a time, When finnished enter -1'
+            print(msg)
+            num = 0
+            while(True):
+                num+=1
+                msg = 'enter exercicie number '
+                ex = input(msg)
+                ex = checkType(ex,lambda x: int(x),lambda x: x >= -1 and x != 0 and not visited[x-1],msg,msg)
+                visited[ex - 1] = True
+                if ex != -1:
+                    msg = 'enter difficulty (1 - 10): '
+                    dif = input(msg)
+                    dif = checkType(dif,lambda x: int(x),lambda x: x >= 1 and x <= 10,'Try again: '+msg,'Try again: ' +msg)
+                    if(num == numberEx):
+                        break
+                    goalDif.append((ex,dif))
+                else:
+                    break
+        else:
+            msg = 'Enter number of exercices that will have final difficulty: '
+            numGoalEx = input(msg)
+            numGoalEx = checkType(numGoalEx,lambda x: int(x), lambda x: x >= 0 and x <= numberEx,msg,'must be less or equal than the total number of exercices, '+msg)
+            goalDif = random.sample(range(1,numberEx+1),numGoalEx)
+            goalDif = list(map(lambda x: (x,random.randint(iniDif[x-1],10)),goalDif))
+
+        precursors = []
+        visited = [False for x in range(numberEx)]
+        msg = 'Enter each precursor and then its exercicie, When finnished enter -1'
+        print(msg)
+        while(True):
+            msg = 'enter precursor number '
+            pr = input(msg)
+            pr = checkType(pr,lambda x: int(x),lambda x: x >= -1 and x != 0 ,msg,msg)
+            if pr != -1:
+                msg = 'enter exercicie: '
+                ex = input(msg)
+                ex = checkType(ex,lambda x: int(x),lambda x: x >= 1 and not visited[x-1] and x != pr,msg,'Must exist and not be visited and be different than predecesor\n'+msg)
+                precursors.append((pr,ex))
+                visited[ex - 1] = True
+            else:
+                break
+
+        preparadors = []
+        msg = 'Enter each preparator and then its exercicie, When finnished enter -1'
+        print(msg)
+        while(True):
+            msg = 'enter preparator number '
+            pr = input(msg)
+            pr = checkType(pr,lambda x: int(x),lambda x: x >= -1 and x!=0 ,msg,msg)
+            if pr != -1:
+                msg = 'enter exercicie: '
+                ex = input(msg)
+                ex = checkType(ex,lambda x: int(x),lambda x: x >= 1 and x != pr,msg,'Must exist and be different than preparator\n'+msg)
+                preparadors.append((pr,ex))
+            else:
+                break
+
+        fileName = input('Enter the name of the file that will be saved (auto extension): ')
+        writeProblemExt3(numberEx,iniDif,goalDif,precursors,preparadors,name=fileName)
 
 
+    else:       #extension4
+        msg = 'How many exercices do you want to do? (> 0): '
+        numberEx = input(msg)
+        numberEx = checkType(numberEx,lambda x: int(x), lambda x: x > 0, msg,msg)
+        msg = 'Do you want to enter each initial difficulty or assign it randomly? (E/R): '
+        enter = input(msg)
+        enter = ChooseStringOptions(enter,msg,'R','E')
+        print(enter)
+        iniDif = []
+        if enter:
+            msg = 'Enter each exercise initial difficulty one at a time: (0 - 10)'
+            print(msg)
+            for i in range(numberEx):
+                msg = 'ex' + repr(i+1) + ' initial difficulty: (1 - 10)'
+                dif = input(msg)
+                dif = checkType(dif,lambda x: int(x),lambda x: x >= 1 and x <= 10,msg,msg)
+                iniDif.append(dif)
+        else:
+            iniDif = list(map(lambda x: random.randint(1,10),range(1,numberEx+1)))
+        goalDif = []
+        visited = [False for x in range(numberEx)]
+        msg = 'Do you want to enter each final difficulty or assign it randomly? (E/R)'
+        enter = input(msg)
+        enter = ChooseStringOptions(enter,msg,'R','E')
+        if enter:
+            msg = 'Enter each final difficulty one at a time, When finnished enter -1'
+            print(msg)
+            num = 0
+            while(True):
+                num+=1
+                msg = 'enter exercicie number '
+                ex = input(msg)
+                ex = checkType(ex,lambda x: int(x),lambda x: x >= -1 and x != 0 and not visited[x-1],msg,msg)
+                visited[ex - 1] = True
+                if ex != -1:
+                    msg = 'enter difficulty (1 - 10): '
+                    dif = input(msg)
+                    dif = checkType(dif,lambda x: int(x),lambda x: x >= 1 and x <= 10,'Try again: '+msg,'Try again: ' +msg)
+                    if(num == numberEx):
+                        break
+                    goalDif.append((ex,dif))
+                else:
+                    break
+        else:
+            msg = 'Enter number of exercices that will have final difficulty: '
+            numGoalEx = input(msg)
+            numGoalEx = checkType(numGoalEx,lambda x: int(x), lambda x: x >= 0 and x <= numberEx,msg,'must be less or equal than the total number of exercices, '+msg)
+            goalDif = random.sample(range(1,numberEx+1),numGoalEx)
+            goalDif = list(map(lambda x: (x,random.randint(iniDif[x-1],10)),goalDif))
+
+        msg = 'Do you want to enter each time for exercise or assign it randomly? (E/R): '
+        enter = input(msg)
+        enter = ChooseStringOptions(enter,msg,'R','E')
+        print(enter)
+        tempsIni = []
+        if enter:
+            msg = 'Enter each exercise time one at a time: (1 - 90)'
+            print(msg)
+            for i in range(numberEx):
+                msg = 'ex' + repr(i+1) + ' time: (1 - 90)'
+                dif = input(msg)
+                dif = checkType(dif,lambda x: int(x),lambda x: x >= 1 and x <= 90,msg,msg)
+                tempsIni.append(dif)
+        else:
+            tempsIni = list(map(lambda x: random.randint(1,10),range(1,numberEx+1)))
+
+        precursors = []
+        visited = [False for x in range(numberEx)]
+        msg = 'Enter each precursor and then its exercicie, When finnished enter -1'
+        print(msg)
+        while(True):
+            msg = 'enter precursor number '
+            pr = input(msg)
+            pr = checkType(pr,lambda x: int(x),lambda x: x >= -1 and x != 0 ,msg,msg)
+            if pr != -1:
+                msg = 'enter exercicie: '
+                ex = input(msg)
+                ex = checkType(ex,lambda x: int(x),lambda x: x >= 1 and not visited[x-1] and x != pr,msg,'Must exist and not be visited and be different than predecesor\n'+msg)
+                precursors.append((pr,ex))
+                visited[ex - 1] = True
+            else:
+                break
+
+        preparadors = []
+        msg = 'Enter each preparator and then its exercicie, When finnished enter -1'
+        print(msg)
+        while(True):
+            msg = 'enter preparator number '
+            pr = input(msg)
+            pr = checkType(pr,lambda x: int(x),lambda x: x >= -1 and x!=0 ,msg,msg)
+            if pr != -1:
+                msg = 'enter exercicie: '
+                ex = input(msg)
+                ex = checkType(ex,lambda x: int(x),lambda x: x >= 1 and x != pr,msg,'Must exist and be different than preparator\n'+msg)
+                preparadors.append((pr,ex))
+            else:
+                break
+
+        fileName = input('Enter the name of the file that will be saved (auto extension): ')
+        writeProblemExt4(numberEx,iniDif,goalDif,tempsIni,precursors,preparadors,name=fileName)
 
 
 
@@ -304,19 +500,31 @@ filesExt4 = [f for f in listdir(pathExt4) if isfile(join(pathExt4, f))]
 v3 = v4 = 0
 
 for x in filesExt3:
-    num = int(x[4:(5+(len(x) - 10))])
-    if(num > v3):
-        v3 = num
+    if(x[0:4] == 'file'):
+        num = x[4:(5+(len(x) - 10))]
+        try:
+            num = int(num)
+        except:
+            pass
+        if isinstance(num,int):
+            if(num > v3):
+                v3 = num
 
 for x in filesExt4:
-    num = int(x[4:(5+(len(x) - 10))])
-    if(num > v4):
-        v4 = num
-
+    if(x[0:4] == 'file'):
+        num = x[4:(5+(len(x) - 10))]
+        try:
+            num = int(num)
+        except:
+            pass
+        if isinstance(num,int):
+            if(num > v4):
+                v4 = num
+print(v3,v4)
 
 
 is_random = input('Generate Random or Interactively? (R/I): ')
-is_random = ChooseStringOptions(is_random,'Try again,generate Random or Interactively? (I/R): ','I','R')
+is_random = ChooseStringOptions(is_random,'Try again,generate Random or Interactively? (R/I): ','I','R')
 if is_random:
     randomGenerate(v3+1,v4+1)
 
