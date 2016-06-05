@@ -16,5 +16,9 @@ file_i.pddl being i the version number. If files exists the number version will 
 asked to you. The file name and location will also be asked to you, saved upon the root folder of the project.
 
 ##Instructions:
--Give the file permission to be executed. For example: '$ chmod +x generator.py' on unix-based systems.
+-Give the file permission to be executed. For example:
+```bash
+ $ chmod +x generator.py
+```
+on unix-based systems.
 -execute and follow the indications of the program.
