@@ -343,7 +343,7 @@ def interactiveGenerate():
         print(enter)
         iniDif = []
         if enter:
-            msg = 'Enter each exercise initial difficulty one at a time: (0 - 10)'
+            msg = 'Enter each exercise initial difficulty one at a time: (1 - 10)'
             print(msg)
             for i in range(numberEx):
                 msg = 'ex' + repr(i+1) + ' initial difficulty: (1 - 10)'
@@ -367,7 +367,7 @@ def interactiveGenerate():
                 num+=1
                 msg = 'enter exercicie number '
                 ex = input(msg)
-                ex = checkType(ex,lambda x: int(x),lambda x: x >= -1 and x != 0 and not visited[x-1],msg,msg)
+                ex = checkType(ex,lambda x: int(x),lambda x: x >= -1 and x != 0 and not visited[x-1] and x <= numberEx,msg,msg)
                 visited[ex - 1] = True
                 if ex != -1:
                     msg = 'enter difficulty (1 - 10): '
@@ -393,11 +393,11 @@ def interactiveGenerate():
         while(True):
             msg = 'enter precursor number '
             pr = input(msg)
-            pr = checkType(pr,lambda x: int(x),lambda x: x >= -1 and x != 0 ,msg,msg)
+            pr = checkType(pr,lambda x: int(x),lambda x: x >= -1 and x != 0 and x<= numberEx,msg,msg)
             if pr != -1:
                 msg = 'enter exercicie: '
                 ex = input(msg)
-                ex = checkType(ex,lambda x: int(x),lambda x: x >= 1 and not visited[x-1] and x != pr,msg,'Must exist and not be visited and be different than predecesor\n'+msg)
+                ex = checkType(ex,lambda x: int(x),lambda x: x >= 1 and not visited[x-1] and x != pr and x <= numberEx,msg,'Must exist and not be visited and be different than predecesor\n'+msg)
                 precursors.append((pr,ex))
                 visited[ex - 1] = True
             else:
@@ -410,7 +410,7 @@ def interactiveGenerate():
         while(True):
             msg = 'enter preparator number '
             pr = input(msg)
-            pr = checkType(pr,lambda x: int(x),lambda x: x >= -1 and x!=0 ,msg,msg)
+            pr = checkType(pr,lambda x: int(x),lambda x: x >= -1 and x!=0 and x <= numberEx,msg,msg)
             if pr != -1:
                 msg = 'enter exercicie: '
                 ex = input(msg)
@@ -460,12 +460,12 @@ def interactiveGenerate():
                 num+=1
                 msg = 'enter exercicie number '
                 ex = input(msg)
-                ex = checkType(ex,lambda x: int(x),lambda x: x >= -1 and x != 0 and not visited[x-1],msg,msg)
+                ex = checkType(ex,lambda x: int(x),lambda x: x >= -1 and x != 0 and not visited[x-1] and x <= numberEx,msg,msg)
                 visited[ex - 1] = True
                 if ex != -1:
                     msg = 'enter difficulty (1 - 10): '
                     dif = input(msg)
-                    dif = checkType(dif,lambda x: int(x),lambda x: x >= 1 and x <= 10,'Try again: '+msg,'Try again: ' +msg)
+                    dif = checkType(dif,lambda x: int(x),lambda x: x >= 1 and x <= 10 and x<= numberEx,'Try again: '+msg,'Try again: ' +msg)
                     if(num == numberEx):
                         break
                     goalDif.append((ex,dif))
@@ -503,11 +503,11 @@ def interactiveGenerate():
         while(True):
             msg = 'enter precursor number '
             pr = input(msg)
-            pr = checkType(pr,lambda x: int(x),lambda x: x >= -1 and x != 0 ,msg,msg)
+            pr = checkType(pr,lambda x: int(x),lambda x: x >= -1 and x != 0 and x <= numberEx ,msg,msg)
             if pr != -1:
                 msg = 'enter exercicie: '
                 ex = input(msg)
-                ex = checkType(ex,lambda x: int(x),lambda x: x >= 1 and not visited[x-1] and x != pr,msg,'Must exist and not be visited and be different than predecesor\n'+msg)
+                ex = checkType(ex,lambda x: int(x),lambda x: x >= 1 and not visited[x-1] and x != pr and x <= numberEx,msg,'Must exist and not be visited and be different than predecesor\n'+msg)
                 precursors.append((pr,ex))
                 visited[ex - 1] = True
             else:
@@ -520,11 +520,11 @@ def interactiveGenerate():
         while(True):
             msg = 'enter preparator number '
             pr = input(msg)
-            pr = checkType(pr,lambda x: int(x),lambda x: x >= -1 and x!=0 ,msg,msg)
+            pr = checkType(pr,lambda x: int(x),lambda x: x >= -1 and x!=0 and x <= numberEx,msg,msg)
             if pr != -1:
                 msg = 'enter exercicie: '
                 ex = input(msg)
-                ex = checkType(ex,lambda x: int(x),lambda x: x >= 1 and x != pr,msg,'Must exist and be different than preparator\n'+msg)
+                ex = checkType(ex,lambda x: int(x),lambda x: x >= 1 and x != pr and x <= numberEx,msg,'Must exist and be different than preparator\n'+msg)
                 preparadors.append((pr,ex))
             else:
                 break
