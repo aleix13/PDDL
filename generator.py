@@ -256,7 +256,7 @@ def randomGenerate(v3,v4):
 
 
             #write the problem into a file
-            writeProblemExt3(numberEx,iniDif,goalDif,precursors,preparadors,vesrionfile=v3)
+            writeProblemExt3(numberEx,iniDif,goalDif,precursors,preparadors,versionfile=v3)
             v3+=1
 
     else:       #---------------------------------extension4---------------------------------
